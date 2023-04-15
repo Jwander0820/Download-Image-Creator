@@ -26,12 +26,20 @@ class ImageCrawler:
         """
         如果當前網址尚未被訪問，則執行爬取和下載圖片的過程。
         """
-        if not self.check_visited():
-            self.crawl_images()
-            self.download_images()
-            self.mark_visited()
-        else:
-            print(f"The URL '{self.url}' has already been visited.")
+        try:
+            if not self.check_visited():
+                self.crawl_images()
+                self.download_images()
+                self.mark_visited()
+                text = f"Download {self.url}"
+            else:
+                text = f"The URL has already been visited. '{self.url}'"
+        except Exception as e:
+            text = f"An error occurred: {str(e)}"
+            self.logger.error(e, exc_info=e)
+
+        print(text)
+        return text
 
     def check_visited(self) -> bool:
         """

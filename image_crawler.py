@@ -22,18 +22,18 @@ class ImageCrawler:
         self.trans_img_urls = []
         self.img_prompt = ""
 
-    def run(self):
+    def run(self, folder_name="img"):
         """
         如果當前網址尚未被訪問，則執行爬取和下載圖片的過程。
         """
         try:
             if not self.check_visited():
                 self.crawl_images()
-                self.download_images()
+                self.download_images(folder_name)
                 self.mark_visited()
-                text = f"Download {self.url}"
+                text = f"已成功下載 {self.url}"
             else:
-                text = f"The URL has already been visited. '{self.url}'"
+                text = f"圖片已存在 {self.url}"
         except Exception as e:
             text = f"An error occurred: {str(e)}"
             self.logger.error(e, exc_info=e)
@@ -134,6 +134,8 @@ class ImageCrawler:
         :param img_urls: 要下載的圖片 URL 列表。
         :param folder: 圖片存儲文件夾。
         """
+        if not folder:  # 若為空值，則儲存到預設資料夾img
+            folder = DEFAULT_FOLDER
         if not os.path.exists(folder):
             os.makedirs(folder)
 

@@ -19,6 +19,7 @@ def api_status():
 @app.route('/api/download', methods=['POST'])
 def api_download():
     input_value = request.form['input_value']
+    folder_name = request.form['folder_name']
     if input_value.startswith("http"):
         url = input_value
     else:
@@ -26,11 +27,11 @@ def api_download():
         url = f"https://www.bing.com/images/create/a-mystical-interstellar-creature2c-shaped-by-cluste/{token}?FORM=GUH2CR"
 
     crawler = ImageCrawler(url)
-    result_text = crawler.run()
+    result_text = crawler.run(folder_name)
     flash(result_text)
     flash(f"Prompt：{crawler.img_prompt}")
 
-    return redirect(url_for('home'))
+    return render_template('index.html', input_value="", folder_name=folder_name)
 
 
 if __name__ == '__main__':

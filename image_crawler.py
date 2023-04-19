@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import requests
 from bs4 import BeautifulSoup
@@ -41,33 +42,50 @@ class ImageCrawler:
         print(text)
         return text
 
+    def get_token(self) -> str:
+        """
+        從 URL 中提取 token。
+
+        :return: URL 中的 token。
+        """
+        token = self.url.split("/")[-1].split("?")[0]
+        return token
+
     def check_visited(self) -> bool:
         """
-        檢查當前網址是否已經被訪問過。
+        檢查當前 URL 的 token 是否已被訪問過。
 
         :return: 如果已訪問，則返回 True，否則返回 False。
         """
-        if not os.path.exists(self.visited_urls_file):
+        visited_file = "visited.json"
+
+        if not os.path.exists(visited_file):
             return False
 
-        with open(self.visited_urls_file, "r") as file:
-            visited_urls_data = json.load(file)
-            return self.url in visited_urls_data["visited"]
+        with open(visited_file, "r") as f:
+            visited_data = json.load(f)
+
+        token = self.get_token()
+
+        return token in visited_data["visited"]
 
     def mark_visited(self):
         """
-        將當前網址標記為已訪問。
+        將當前 URL 的 token 標記為已訪問。
         """
-        if os.path.exists(self.visited_urls_file):
-            with open(self.visited_urls_file, "r") as file:
-                visited_urls = json.load(file)
+        visited_file = "visited.json"
+        token = self.get_token()
+
+        if os.path.exists(visited_file):
+            with open(visited_file, "r") as f:
+                visited_data = json.load(f)
         else:
-            visited_urls = {"visited": []}
+            visited_data = {"visited": []}
 
-        visited_urls["visited"].append(self.url)
+        visited_data["visited"].append(token)
 
-        with open(self.visited_urls_file, "w") as file:
-            json.dump(visited_urls, file)
+        with open(visited_file, "w") as f:
+            json.dump(visited_data, f)
 
     def crawl_images(self):
         """

@@ -5,8 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from logger import log_filter, create_logger
 
-DEFAULT_FOLDER = "img"
-
+DEFAULT_FOLDER = "tmp_img"
+BASE_FOLDER = "img"
 
 class ImageCrawler:
     def __init__(self, url: str, visited_urls_file="visited_urls.json"):
@@ -153,7 +153,9 @@ class ImageCrawler:
         :param folder: 圖片存儲文件夾。
         """
         if not folder:  # 若為空值，則儲存到預設資料夾img
-            folder = DEFAULT_FOLDER
+            folder = os.path.join(BASE_FOLDER, DEFAULT_FOLDER)
+        else:
+            folder = os.path.join(BASE_FOLDER, folder)  # 添加BASE_FOLDER
         if not os.path.exists(folder):
             os.makedirs(folder)
 

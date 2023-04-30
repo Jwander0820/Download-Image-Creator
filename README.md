@@ -32,6 +32,20 @@ python app.py
 
 3. 下載完成後，您將在主頁面上看到相應的消息。下載的圖片將保存在應用程序目錄下的 img 文件夾中。
 
+### Ex. Windows .bat
+1. 建議建置一個虛擬環境，安裝所需套件
+2. 建立.bat檔，並寫入以下指令
+   - call 其後填入虛擬環境的啟動檔
+   - python 其後填入app.py路徑
+3. 執行.bat檔會自動開啟網頁並啟動虛擬環境與Flask服務
+
+```commandline
+@echo off
+start http://127.0.0.1:8080
+call C:\Download-Image-Creator\venv\Scripts\activate
+python C:\Download-Image-Creator\app.py
+```
+
 ## 注意事項
 - 下載圖片時請確保 URL 或 token 正確，否則應用程序可能無法正常運行。
 - 應用程序捕捉可能的錯誤並在主頁面上顯示錯誤消息，但可能無法處理所有情況。

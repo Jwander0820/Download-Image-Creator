@@ -18,12 +18,45 @@
         {% endif %}
     {% endwith %}
 
-     <form action="/api/download" method="post">
+    <form action="/api/download" method="post">
         <label for="input_value">Token or URL:</label>
         <input type="text" id="input_value" name="input_value" value="{{ input_value }}"><br>
         <label for="folder_name">Folder Name:</label>
         <input type="text" id="folder_name" name="folder_name" value="{{ folder_name }}"><br>
-        <input type="submit" value="Download Images">
+        <label for="autopaste">AutoPaste:</label>
+        <input type="checkbox" id="autopaste" name="autopaste" checked><br>
+        <input type="submit" value="Download Images" id="download_button">
     </form>
+
+    <!-- JavaScript 腳本 -->
+    <script>
+        // 當 DOM 加載完成時執行此函數
+        document.addEventListener('DOMContentLoaded', function () {
+            // 為 body 元素添加 keydown 事件監聽器
+            document.body.addEventListener('keydown', function (event) {
+                // 檢查 AutoPaste 複選框的狀態
+                var autoPaste = document.getElementById('autopaste').checked;
+                // 如果按下 Ctrl+V 並且 AutoPaste 選項選中
+                if (event.ctrlKey && event.key === 'v' && autoPaste) {
+                    // 阻止事件的默認行為
+                    event.preventDefault();
+                    // 讀取剪貼板上的文本
+                    navigator.clipboard.readText()
+                        .then(function (text) {
+                            // 將剪貼板上的文本填入 "Token or URL" 欄位
+                            document.getElementById('input_value').value = text;
+                            // 將焦點設置在 "Download Images" 按鈕上(非必要)
+                            // document.getElementById('download_button').focus();
+                            // 在此處添加代碼，以自動觸發 "Download Images" 按鈕
+                            document.getElementById('download_button').click();
+                        })
+                        .catch(function (err) {
+                            // 輸出錯誤信息到控制台
+                            console.error('Failed to read clipboard contents: ', err);
+                        });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

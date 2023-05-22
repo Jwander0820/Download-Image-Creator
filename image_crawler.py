@@ -159,19 +159,24 @@ class ImageCrawler:
         if not os.path.exists(folder):
             os.makedirs(folder)
 
+        # 正則表達式反斜線"\"用於配對字符，主要配對了括號與檔名 "("、")"、".png"，而特殊元素"$"表示字符串的結尾，確保檔名在最後面
+        # \d 在正則表達式中表示任何數字字符， + 表示前面的元素可以出現一次或多次。所以 (\d+) 配對一個或多個數字字符，並將其作為一個組捕獲。
+        max_num = 0
+        for filename in os.listdir(folder):
+            match = re.search(r'\((\d+)\)\.png$', filename)
+            if match:
+                # 配對的數字部分將作為一個組被捕獲，可以通過 match.group(1) 來取得。
+                num = int(match.group(1))
+                if num > max_num:
+                    max_num = num
+
         for url in img_urls:
             response = requests.get(url)
             filename = self.img_prompt.split(".")[-1] + ".png"
             path = os.path.join(folder, filename)
 
             if os.path.exists(path):
-                count = 1
-                while True:
-                    new_path = os.path.join(folder, "{} ({}).png".format(self.img_prompt.split(".")[-1], count))
-                    if os.path.exists(new_path):
-                        count += 1
-                    else:
-                        path = new_path
-                        break
+                max_num += 1
+                path = os.path.join(folder, "{} ({}).png".format(self.img_prompt.split(".")[-1], max_num))
             with open(path, "wb") as f:
                 f.write(response.content)
